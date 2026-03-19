@@ -23,7 +23,7 @@ case "$hook_event_name" in
     "$NOTIFIER" \
       --source claude \
       --event completed \
-      --title "Claude 완료" \
+      --title "Claude Complete" \
       --message "$message" \
       --sound true
     ;;

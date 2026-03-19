@@ -24,10 +24,10 @@ normalize_text() {
 fallback_message_for_event() {
   case "$1" in
     question)
-      printf '%s' '사용자 답변이나 승인이 필요합니다'
+      printf '%s' 'User input or approval is required'
       ;;
     *)
-      printf '%s' '작업이 끝났어요'
+      printf '%s' 'Task complete'
       ;;
   esac
 }
@@ -96,7 +96,7 @@ if [[ -z "$EVENT" ]]; then
 fi
 
 if [[ -z "$TITLE" ]]; then
-  TITLE="Agent Bell 알림"
+  TITLE="Agent Bell Notification"
 fi
 
 if [[ -z "$MESSAGE" ]]; then

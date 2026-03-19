@@ -52,7 +52,7 @@ fi
 "$NOTIFIER" \
   --source codex \
   --event completed \
-  --title "Codex 완료" \
+  --title "Codex Complete" \
   --message "$message" \
   --sound true
 
