@@ -1,8 +1,8 @@
 # Agent Bell
 
-Notification hooks for Codex CLI and Claude Code on macOS and native Windows.
+Notification hooks for Codex CLI, Claude Code, and GitHub Copilot CLI on macOS and native Windows.
 
-Agent Bell gives both CLIs the same lightweight notification behavior:
+Agent Bell gives all three CLIs the same lightweight notification behavior:
 
 - emoji-prefixed titles
 - title + body only
@@ -20,7 +20,8 @@ Agent Bell gives both CLIs the same lightweight notification behavior:
 
 - Codex completion notifications
 - Claude `Stop` notifications
-- Shared notification style across both CLIs
+- Copilot CLI `sessionEnd` notifications
+- Shared notification style across all three CLIs
 
 Not included yet:
 
@@ -36,10 +37,12 @@ Not included yet:
 - `hooks/codex-notify.ps1`: Codex hook for native Windows PowerShell
 - `hooks/claude-hook.sh`: Claude hook for macOS / Unix-like shells
 - `hooks/claude-hook.ps1`: Claude hook for native Windows PowerShell
+- `hooks/copilot-hook.sh`: Copilot CLI hook for macOS / Unix-like shells
+- `hooks/copilot-hook.ps1`: Copilot CLI hook for native Windows PowerShell
 
 ## Notification Format
 
-- Title examples: `🔔 Codex Complete`, `🔔 Claude Complete`, `❓ Codex Needs Attention`
+- Title examples: `🔔 Codex Complete`, `🔔 Claude Complete`, `🔔 Copilot Complete`, `⚠️ Copilot Error`, `❓ Codex Needs Attention`
 - Body: raw source message with newlines, tabs, and repeated spaces collapsed into single spaces
 - No subtitle
 - No Markdown formatting
@@ -82,7 +85,7 @@ C:\path\to\agent-bell
 ### Make The Scripts Executable
 
 ```bash
-chmod +x scripts/notify-agent.sh hooks/codex-notify.sh hooks/claude-hook.sh
+chmod +x scripts/notify-agent.sh hooks/codex-notify.sh hooks/claude-hook.sh hooks/copilot-hook.sh
 ```
 
 ### Codex Setup
@@ -108,6 +111,25 @@ Add or update this in `~/.claude/settings.json`:
             "command": "<REPO_PATH>/hooks/claude-hook.sh"
           }
         ]
+      }
+    ]
+  }
+}
+```
+
+### Copilot CLI Setup
+
+Create `~/.copilot/hooks/agent-bell.json`:
+
+```json
+{
+  "version": 1,
+  "hooks": {
+    "sessionEnd": [
+      {
+        "type": "command",
+        "bash": "<REPO_PATH>/hooks/copilot-hook.sh",
+        "timeoutSec": 10
       }
     ]
   }
@@ -151,6 +173,25 @@ Add or update this in `%USERPROFILE%\.claude\settings.json`:
 }
 ```
 
+### Copilot CLI Setup
+
+Create `%USERPROFILE%\.copilot\hooks\agent-bell.json`:
+
+```json
+{
+  "version": 1,
+  "hooks": {
+    "sessionEnd": [
+      {
+        "type": "command",
+        "powershell": "powershell -NoProfile -File C:\\path\\to\\agent-bell\\hooks\\copilot-hook.ps1",
+        "timeoutSec": 10
+      }
+    ]
+  }
+}
+```
+
 ## Manual Test
 
 ### macOS
@@ -180,6 +221,13 @@ Codex hook:
   '{"type":"agent-turn-complete","last-assistant-message":"Codex sends this full response body."}'
 ```
 
+Copilot CLI hook:
+
+```bash
+printf '%s' '{"reason":"complete","timestamp":1704618000000,"cwd":"/path/to/project"}' \
+  | <REPO_PATH>/hooks/copilot-hook.sh
+```
+
 ### Windows
 
 Shared notifier:
@@ -205,6 +253,13 @@ Codex hook:
 ```powershell
 powershell -NoProfile -File C:\path\to\agent-bell\hooks\codex-notify.ps1 `
   '{"type":"agent-turn-complete","last-assistant-message":"Codex sends this full response body."}'
+```
+
+Copilot CLI hook:
+
+```powershell
+'{"reason":"complete","timestamp":1704618000000,"cwd":"C:\\path\\to\\project"}' |
+  powershell -NoProfile -File C:\path\to\agent-bell\hooks\copilot-hook.ps1
 ```
 
 ## Notes
