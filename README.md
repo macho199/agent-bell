@@ -29,6 +29,11 @@ Not included yet:
 - Claude `Notification` event routing
 - WSL-specific bridging
 
+## Known Limitations
+
+- **Copilot CLI**: the `sessionEnd` event payload does not include the last assistant message. Copilot CLI notifications always show `Task complete` as the body regardless of what the agent responded.
+  Claude and Codex hooks do include the last message in their respective payloads (`last_assistant_message` and `last-assistant-message`).
+
 ## Project Structure
 
 - `scripts/notify-agent.sh`: shared macOS notifier
